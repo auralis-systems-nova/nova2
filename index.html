@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Nova 2</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070A1A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%237C5CFF'/%3E%3Ccircle cx='20' cy='12' r='7' fill='%233DE0FF'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@200;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#070A1A; --violet:#7C5CFF; --cyan:#3DE0FF; --rose:#FF7AC8; --mist:#E9ECFF;
+  --dim:rgba(233,236,255,.62); --edge:rgba(255,255,255,.2);
+  --disp:'Sora',system-ui,sans-serif;
+  --ui:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:var(--ink);color:var(--mist);font-family:var(--ui);-webkit-font-smoothing:antialiased;overflow:hidden}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:12px}
+
+/* wallpaper */
+.aurora{position:fixed;inset:0;overflow:hidden;z-index:0}
+.aurora i{position:absolute;border-radius:50%;filter:blur(48px);opacity:.6;will-change:transform}
+.aurora .a{width:70vmax;height:70vmax;left:-22vmax;top:-26vmax;background:radial-gradient(circle,var(--violet),transparent 64%);animation:d1 38s ease-in-out infinite alternate}
+.aurora .b{width:62vmax;height:62vmax;right:-20vmax;bottom:-22vmax;background:radial-gradient(circle,var(--cyan),transparent 64%);opacity:.42;animation:d2 44s ease-in-out infinite alternate}
+.aurora .c{width:40vmax;height:40vmax;right:8vmax;top:-10vmax;background:radial-gradient(circle,var(--rose),transparent 66%);opacity:.34;animation:d3 52s ease-in-out infinite alternate}
+.aurora::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,transparent 35%,rgba(7,10,26,.75))}
+@keyframes d1{to{transform:translate(14vmax,10vmax) scale(1.12)}}
+@keyframes d2{to{transform:translate(-12vmax,-8vmax) scale(1.08)}}
+@keyframes d3{to{transform:translate(-18vmax,14vmax) scale(.9)}}
+
+/* glass */
+.glass{position:relative;background:linear-gradient(140deg,rgba(255,255,255,.15),rgba(255,255,255,.05));
+  backdrop-filter:blur(30px) saturate(170%);-webkit-backdrop-filter:blur(30px) saturate(170%);
+  border:1px solid var(--edge);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -1px 0 rgba(255,255,255,.06),0 24px 60px -24px rgba(0,0,0,.7)}
+.glass::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(120% 60% at 20% 0%,rgba(255,255,255,.22),transparent 55%)}
+
+/* screens */
+.screen{position:fixed;inset:0;z-index:1;display:none;opacity:0;transition:opacity .5s ease}
+.screen.on{display:flex;opacity:1}
+.screen.fade{opacity:0}
+
+/* boot */
+#boot{flex-direction:column;align-items:center;justify-content:center;gap:26px}
+.orb{width:84px;height:84px;border-radius:50%;position:relative;background:radial-gradient(circle at 32% 28%,#fff 0,var(--cyan) 22%,var(--violet) 62%,#2a1d7a);
+  box-shadow:0 0 70px rgba(124,92,255,.7),inset 0 -8px 20px rgba(0,0,0,.3);animation:pulse 2.4s ease-in-out infinite}
+.orb::after{content:"";position:absolute;inset:-12px;border-radius:50%;border:1px solid rgba(255,255,255,.25);transform:rotate(-20deg) scaleY(.38)}
+@keyframes pulse{50%{transform:scale(1.07)}}
+.mark{font:600 30px var(--disp);letter-spacing:.02em}
+.mark b{font-weight:200;color:var(--cyan)}
+.bar{width:200px;height:4px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:4px;background:linear-gradient(90deg,var(--violet),var(--cyan));transition:width .3s}
+#bootmsg{font-size:14px;color:var(--dim);min-height:20px}
+
+/* lock + login */
+#lock{flex-direction:column;align-items:center;justify-content:center;gap:clamp(18px,4vh,40px);padding:max(24px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom));overflow:auto}
+.hero{text-align:center}
+.clk{font:200 clamp(84px,19vw,190px)/.95 var(--disp);letter-spacing:-.04em;
+  background:linear-gradient(180deg,#fff 30%,rgba(255,255,255,.55));-webkit-background-clip:text;background-clip:text;color:transparent}
+.dt{margin-top:10px;font-size:clamp(15px,2.4vw,20px);color:var(--dim)}
+.sheet{width:min(380px,100%);border-radius:32px;padding:26px 24px 24px;animation:rise .9s cubic-bezier(.2,.8,.2,1) both .15s}
+@keyframes rise{from{opacity:0;transform:translateY(40px) scale(.97)}}
+.sheet h2{font:600 20px var(--disp);display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.sheet h2 .orb{width:26px;height:26px;animation:none;box-shadow:0 0 16px rgba(124,92,255,.7)}
+.sheet h2 .orb::after{display:none}
+.seg{position:relative;display:grid;grid-template-columns:1fr 1fr;padding:4px;border-radius:16px;background:rgba(0,0,0,.28);margin-bottom:16px}
+.seg i{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:12px;background:rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.3);transition:transform .35s cubic-bezier(.3,1.3,.5,1)}
+.seg[data-m=up] i{transform:translateX(100%)}
+.seg button{position:relative;padding:9px 0;font-size:14px;font-weight:500;color:var(--dim);transition:color .2s}
+.seg button[aria-pressed=true]{color:#fff}
+.field{display:block;margin-bottom:10px}
+.field input{width:100%;padding:15px 16px;border-radius:16px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.26);font-size:16px;outline:0;transition:border-color .2s,box-shadow .2s}
+.field input::placeholder{color:rgba(233,236,255,.4)}
+.field input:focus{border-color:var(--cyan);box-shadow:0 0 0 4px rgba(61,224,255,.16)}
+.err{min-height:20px;font-size:13px;color:#FF9DBD;margin:2px 2px 8px}
+.go{width:100%;padding:15px;border-radius:18px;font-weight:600;font-size:16px;color:#06081a;
+  background:linear-gradient(120deg,#fff,#CFE9FF 40%,var(--cyan));box-shadow:0 10px 30px -8px rgba(61,224,255,.6),inset 0 1px 0 #fff;transition:transform .15s,opacity .2s}
+.go:active{transform:scale(.98)}
+.go[disabled]{opacity:.55;cursor:wait}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+/* home */
+#home{flex-direction:column;padding:0 clamp(16px,4vw,40px);overflow:auto}
+.top{display:flex;justify-content:space-between;align-items:center;padding:max(16px,env(safe-area-inset-top)) 0 12px;position:sticky;top:0;z-index:5}
+.top .brand{font:600 17px var(--disp);padding:9px 16px;border-radius:999px}
+.top .brand b{font-weight:200;color:var(--cyan)}
+.who{position:relative}
+.pill{display:flex;align-items:center;gap:10px;padding:5px 14px 5px 5px;border-radius:999px;font-size:14px}
+.av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:600 14px var(--disp);color:#06081a;background:linear-gradient(135deg,var(--rose),var(--cyan))}
+.menu{position:absolute;right:0;top:calc(100% + 10px);min-width:170px;border-radius:20px;padding:6px;display:none}
+.menu.on{display:block}
+.menu button{width:100%;text-align:left;padding:12px 14px;border-radius:14px;font-size:15px}
+.menu button:hover{background:rgba(255,255,255,.12)}
+.wrap{width:min(960px,100%);margin:0 auto;padding-bottom:150px}
+.widget{border-radius:36px;padding:clamp(22px,4vw,40px);display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-top:clamp(8px,3vh,28px)}
+.widget h1{font:600 clamp(24px,4.2vw,40px)/1.15 var(--disp);letter-spacing:-.01em}
+.widget p{margin-top:10px;color:var(--dim);font-size:15px;display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:#5CFFB0;box-shadow:0 0 10px #5CFFB0}
+.dot.demo{background:#FFC35C;box-shadow:0 0 10px #FFC35C}
+.widget .clk{font-size:clamp(56px,9vw,96px)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:26px 18px;margin-top:38px;padding:0 6px}
+.tile{display:flex;flex-direction:column;align-items:center;gap:9px;font-size:13px}
+.icon{width:72px;height:72px;border-radius:24px;display:grid;place-items:center;transition:transform .25s cubic-bezier(.3,1.4,.5,1)}
+.tile:hover .icon{transform:translateY(-4px) scale(1.06)}
+.tile:active .icon{transform:scale(.95)}
+.icon.app{background:linear-gradient(150deg,var(--rose),var(--violet));border-color:rgba(255,255,255,.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 14px 30px -10px rgba(124,92,255,.8)}
+.tile.ghost{opacity:.32;pointer-events:none}
+.tile.ghost .icon{background:rgba(255,255,255,.06)}
+.dock{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));translate:-50% 0;z-index:6;display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:34px}
+.dock .icon{width:58px;height:58px;border-radius:20px}
+.dock .sep{width:1px;height:34px;background:rgba(255,255,255,.2)}
+.dock .icon.plain{background:rgba(255,255,255,.1)}
+.dock .tile{position:relative}
+.dock .tile.open::after{content:"";position:absolute;bottom:-9px;width:5px;height:5px;border-radius:50%;background:#fff}
+
+/* window */
+.win{position:fixed;z-index:8;width:min(560px,92vw);height:min(400px,60vh);border-radius:30px;display:none;flex-direction:column;opacity:0;scale:.92;transition:opacity .3s,scale .35s cubic-bezier(.2,1.2,.4,1)}
+.win.show{display:flex}
+.win.open{opacity:1;scale:1}
+.wbar{display:flex;align-items:center;gap:12px;padding:16px 18px;cursor:grab;touch-action:none;user-select:none}
+.wbar:active{cursor:grabbing}
+.x{width:16px;height:16px;border-radius:50%;background:linear-gradient(135deg,#FF8FB5,#FF5C8A);box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+.wbar span{font:600 15px var(--disp);flex:1;text-align:center;margin-right:28px}
+.wbody{flex:1;padding:10px 30px 30px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
+.wbody .icon{width:84px;height:84px;margin-bottom:8px;cursor:default}
+.wbody h3{font:600 22px var(--disp)}
+.wbody p{color:var(--dim);font-size:15px;max-width:34ch;line-height:1.5}
+@media(max-width:640px){.win{left:12px;right:12px;width:auto;top:calc(max(16px,env(safe-area-inset-top)) + 64px);bottom:120px;height:auto}.dock{gap:10px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><i class="a"></i><i class="b"></i><i class="c"></i></div>
+
+<!-- boot -->
+<main id="boot" class="screen on">
+  <div class="orb"></div>
+  <div class="mark">Nova <b>2</b></div>
+  <div class="bar"><i id="bootbar"></i></div>
+  <div id="bootmsg" aria-live="polite">Starting Nova core</div>
+</main>
+
+<!-- lock + login -->
+<main id="lock" class="screen">
+  <div class="hero"><div class="clk" id="lockclk">00:00</div><div class="dt" id="lockdt"></div></div>
+  <section class="sheet glass" id="sheet" aria-label="Account">
+    <h2><span class="orb"></span>Nova 2</h2>
+    <div class="seg" id="seg" data-m="in" role="group" aria-label="Sign in or create account">
+      <i></i>
+      <button type="button" data-m="in" aria-pressed="true">Sign in</button>
+      <button type="button" data-m="up" aria-pressed="false">Create account</button>
+    </div>
+    <form id="form" novalidate>
+      <label class="field"><input id="u" placeholder="Username" autocomplete="username" autocapitalize="none" spellcheck="false" aria-label="Username"></label>
+      <label class="field"><input id="p" type="password" placeholder="Password" autocomplete="current-password" aria-label="Password"></label>
+      <div class="err" id="err" role="alert"></div>
+      <button class="go" id="go" type="submit">Sign in</button>
+    </form>
+  </section>
+</main>
+
+<!-- home -->
+<main id="home" class="screen">
+  <header class="top">
+    <div class="brand glass">Nova <b>2</b></div>
+    <div class="who">
+      <button class="pill glass" id="pill" aria-haspopup="true" aria-expanded="false"><span class="av" id="av">N</span><span id="nm">user</span></button>
+      <div class="menu glass" id="menu"><button id="out">Sign out</button></div>
+    </div>
+  </header>
+  <div class="wrap">
+    <section class="widget glass">
+      <div>
+        <h1 id="hi">Good evening</h1>
+        <p><span class="dot" id="dot"></span><span id="stat"></span></p>
+      </div>
+      <div class="clk" id="homeclk">00:00</div>
+    </section>
+    <nav class="grid" aria-label="Apps">
+      <button class="tile" data-app="notes"><span class="icon app glass"><svg width="34" height="34" viewBox="0 0 34 34" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M9 11h16M9 17h16M9 23h9"/><path d="M24 26l7-7" stroke-width="3"/></svg></span>Notes</button>
+      <span class="tile ghost" aria-hidden="true"><span class="icon glass"></span></span>
+      <span class="tile ghost" aria-hidden="true"><span class="icon glass"></span></span>
+      <span class="tile ghost" aria-hidden="true"><span class="icon glass"></span></span>
+      <span class="tile ghost" aria-hidden="true"><span class="icon glass"></span></span>
+      <span class="tile ghost" aria-hidden="true"><span class="icon glass"></span></span>
+    </nav>
+  </div>
+  <div class="dock glass" id="dock">
+    <button class="tile" data-app="notes" aria-label="Notes"><span class="icon app glass"><svg width="28" height="28" viewBox="0 0 34 34" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M9 11h16M9 17h16M9 23h9"/><path d="M24 26l7-7" stroke-width="3"/></svg></span></button>
+    <span class="sep"></span>
+    <button class="tile" id="dockout" aria-label="Sign out"><span class="icon plain glass"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M12 3v8M6.5 6.5a8 8 0 1 0 11 0"/></svg></span></button>
+  </div>
+  <section class="win glass" id="win" role="dialog" aria-label="Notes">
+    <div class="wbar" id="wbar"><button class="x" id="wx" aria-label="Close"></button><span>Notes</span></div>
+    <div class="wbody">
+      <span class="icon app glass"><svg width="42" height="42" viewBox="0 0 34 34" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M9 11h16M9 17h16M9 23h9"/><path d="M24 26l7-7" stroke-width="3"/></svg></span>
+      <h3>Notes is a placeholder</h3>
+      <p>This window shows how apps will look and move. Drag it by the top bar.</p>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+/* ---- Firebase config: paste yours here. Leave apiKey empty to run in demo mode. ---- */
+const FIREBASE_CONFIG = { apiKey:"", authDomain:"", projectId:"", appId:"" };
+const FAKE_DOMAIN = "@nova2.local";
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+/* ---- backends: same shape, so the UI never cares which is running ---- */
+function demoBackend(){
+  const K="nova2.users", S="nova2.session"; let cb=()=>{};
+  const users=()=>{try{return JSON.parse(localStorage.getItem(K))||{}}catch{return{}}};
+  const hash=async s=>{try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("nova2:"+s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}catch{return btoa(s)}};
+  const err=c=>Object.assign(new Error(c),{code:c});
+  return {
+    live:false,
+    onUser(f){cb=f;f(localStorage.getItem(S)?{name:localStorage.getItem(S)}:null);return Promise.resolve()},
+    async signUp(u,p){const all=users();if(all[u])throw err("auth/email-already-in-use");all[u]=await hash(p);localStorage.setItem(K,JSON.stringify(all));localStorage.setItem(S,u);cb({name:u})},
+    async signIn(u,p){const h=users()[u];if(!h||h!==await hash(p))throw err("auth/invalid-credential");localStorage.setItem(S,u);cb({name:u})},
+    async signOut(){localStorage.removeItem(S);cb(null)}
+  };
+}
+async function firebaseBackend(){
+  const v="10.12.2", base=`https://www.gstatic.com/firebasejs/${v}/`;
+  const [{initializeApp},A]=await Promise.all([import(base+"firebase-app.js"),import(base+"firebase-auth.js")]);
+  const auth=A.getAuth(initializeApp(FIREBASE_CONFIG));
+  return {
+    live:true,
+    onUser(f){return new Promise(res=>{let first=true;A.onAuthStateChanged(auth,u=>{f(u?{name:u.displayName||u.email.split("@")[0]}:null);if(first){first=false;res()}})})},
+    async signUp(u,p){const c=await A.createUserWithEmailAndPassword(auth,u+FAKE_DOMAIN,p);await A.updateProfile(c.user,{displayName:u})},
+    signIn:(u,p)=>A.signInWithEmailAndPassword(auth,u+FAKE_DOMAIN,p),
+    signOut:()=>A.signOut(auth)
+  };
+}
+const ERRORS={
+  "auth/email-already-in-use":"That username is taken. Try another one.",
+  "auth/invalid-credential":"Username or password is wrong.",
+  "auth/user-not-found":"Username or password is wrong.",
+  "auth/wrong-password":"Username or password is wrong.",
+  "auth/weak-password":"Choose a password with at least 6 characters.",
+  "auth/network-request-failed":"Can’t reach the server. Check your connection.",
+  "auth/operation-not-allowed":"Turn on Email/Password sign-in in the Firebase console.",
+  "auth/too-many-requests":"Too many attempts. Wait a minute and try again."
+};
+
+/* ---- screens ---- */
+function show(id){
+  $$(".screen").forEach(s=>{if(s.id!==id){s.classList.remove("on")}});
+  const el=$("#"+id); el.classList.add("on");
+}
+const pad=n=>String(n).padStart(2,"0");
+function tick(){
+  const d=new Date(), t=pad(d.getHours())+":"+pad(d.getMinutes());
+  $$(".clk").forEach(e=>e.textContent=t);
+  $("#lockdt").textContent=d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
+}
+tick(); setInterval(tick,1000);
+
+async function bootAnim(){
+  const msgs=["Starting Nova core","Connecting to your space","Loading glass","Syncing your desktop","Ready"];
+  for(let i=0;i<msgs.length;i++){
+    $("#bootmsg").textContent=msgs[i]; $("#bootbar").style.width=((i+1)/msgs.length*100)+"%";
+    await new Promise(r=>setTimeout(r,520));
+  }
+}
+
+/* ---- login form ---- */
+let mode="in", B;
+function setMode(m){
+  mode=m; $("#seg").dataset.m=m;
+  $$("#seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===m));
+  $("#go").textContent=m==="in"?"Sign in":"Create account";
+  $("#p").autocomplete=m==="in"?"current-password":"new-password";
+  $("#err").textContent="";
+}
+$$("#seg button").forEach(b=>b.onclick=()=>setMode(b.dataset.m));
+function fail(msg){
+  $("#err").textContent=msg;
+  const s=$("#sheet"); s.classList.remove("shake"); void s.offsetWidth; s.classList.add("shake");
+}
+$("#form").onsubmit=async e=>{
+  e.preventDefault();
+  const u=$("#u").value.trim().toLowerCase(), p=$("#p").value;
+  $("#err").textContent="";
+  if(!/^[a-z0-9_]{3,20}$/.test(u)) return fail("Usernames are 3 to 20 letters, numbers or underscores.");
+  if(!p) return fail("Enter your password.");
+  if(mode==="up"&&p.length<6) return fail("Choose a password with at least 6 characters.");
+  $("#go").disabled=true;
+  try{ await (mode==="up"?B.signUp(u,p):B.signIn(u,p)); }
+  catch(x){ fail(ERRORS[x.code]||"Something went wrong. Try again."); }
+  $("#go").disabled=false;
+};
+
+/* ---- home ---- */
+function enterHome(user){
+  const h=new Date().getHours();
+  const g=h<5?"Good night":h<12?"Good morning":h<18?"Good afternoon":"Good evening";
+  $("#hi").textContent=`${g}, ${user.name}`;
+  $("#nm").textContent=user.name; $("#av").textContent=user.name[0].toUpperCase();
+  $("#dot").classList.toggle("demo",!B.live);
+  $("#stat").textContent=B.live?"Synced to your Nova cloud":"Demo mode. Saved on this device only.";
+  closeWin(); $("#menu").classList.remove("on");
+  show("home");
+}
+function enterLock(){ $("#p").value=""; $("#err").textContent=""; closeWin(); show("lock"); }
+$("#pill").onclick=()=>{const m=$("#menu");m.classList.toggle("on");$("#pill").setAttribute("aria-expanded",m.classList.contains("on"))};
+document.addEventListener("click",e=>{if(!e.target.closest(".who"))$("#menu").classList.remove("on")});
+$("#out").onclick=()=>B.signOut(); $("#dockout").onclick=()=>B.signOut();
+
+/* ---- window ---- */
+const win=$("#win");
+function openWin(){
+  win.classList.add("show");
+  if(innerWidth>=640){ win.style.left=Math.max(12,(innerWidth-win.offsetWidth)/2)+"px"; win.style.top=Math.max(80,(innerHeight-win.offsetHeight)/2-30)+"px"; }
+  else { win.style.left=win.style.top=""; }
+  requestAnimationFrame(()=>win.classList.add("open"));
+  $$("#dock [data-app]").forEach(t=>t.classList.add("open"));
+}
+function closeWin(){
+  win.classList.remove("open"); $$("#dock [data-app]").forEach(t=>t.classList.remove("open"));
+  setTimeout(()=>{if(!win.classList.contains("open"))win.classList.remove("show")},300);
+}
+$$("[data-app]").forEach(t=>t.onclick=()=>win.classList.contains("open")?closeWin():openWin());
+$("#wx").onclick=closeWin;
+let drag=null; const bar=$("#wbar");
+bar.addEventListener("pointerdown",e=>{if(e.target.closest("button")||innerWidth<640)return;const r=win.getBoundingClientRect();drag={x:e.clientX-r.left,y:e.clientY-r.top};bar.setPointerCapture(e.pointerId)});
+bar.addEventListener("pointermove",e=>{if(!drag)return;win.style.left=Math.min(innerWidth-140,Math.max(-win.offsetWidth+140,e.clientX-drag.x))+"px";win.style.top=Math.min(innerHeight-70,Math.max(8,e.clientY-drag.y))+"px"});
+bar.addEventListener("pointerup",()=>drag=null);
+
+/* ---- start ---- */
+let ready=false, current=null;
+function route(u){ current=u; if(ready) u?enterHome(u):enterLock(); }
+try{ B=FIREBASE_CONFIG.apiKey?await firebaseBackend():demoBackend(); }
+catch(e){ console.error(e); B=demoBackend(); }
+const first=B.onUser(route);
+await Promise.all([bootAnim(),first]);
+ready=true; route(current);
+</script>
+</body>
+</html>
